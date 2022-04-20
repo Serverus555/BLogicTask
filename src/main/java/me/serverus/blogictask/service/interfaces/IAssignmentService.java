@@ -7,5 +7,5 @@ import me.serverus.blogictask.repository.interfaces.IAssignmentDao;
 import me.serverus.blogictask.service.interfaces.IDaoInteractService;
 
 public interface IAssignmentService extends IDaoInteractService<Assignment, IAssignmentDao> {
-    boolean put(AssignmentPutDto dto);
+    void put(AssignmentPutDto dto);
 }

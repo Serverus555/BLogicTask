@@ -6,6 +6,7 @@ import me.serverus.blogictask.model.Assignment;
 import me.serverus.blogictask.service.interfaces.IAssignmentService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -22,7 +23,7 @@ public class AssignmentRest extends CrudRest<Assignment, IAssignmentService> {
     @PUT
     @Path("/byDto")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean put(AssignmentPutDto dto) {
-        return service.put(dto);
+    public void put(@Valid AssignmentPutDto dto) {
+        service.put(dto);
     }
 }

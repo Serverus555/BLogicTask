@@ -12,6 +12,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -28,7 +29,7 @@ public class CompanyRest extends CrudRest<Company, ICompanyService> {
     @PUT
     @Path("/byDto")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean put(CompanyPutDto dto) {
-        return service.put(dto);
+    public void put(@Valid CompanyPutDto dto) {
+        service.put(dto);
     }
 }

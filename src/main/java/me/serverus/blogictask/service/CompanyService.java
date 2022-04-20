@@ -7,8 +7,8 @@ import me.serverus.blogictask.repository.interfaces.ICompanyDao;
 import me.serverus.blogictask.service.interfaces.ICompanyService;
 import me.serverus.blogictask.service.interfaces.IEmployeeService;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
 
 public class CompanyService extends DaoInteractService<Company, ICompanyDao> implements ICompanyService {
 
@@ -21,10 +21,10 @@ public class CompanyService extends DaoInteractService<Company, ICompanyDao> imp
     }
 
     @Override
-    public boolean put(CompanyPutDto dto) {
+    public void put(CompanyPutDto dto) {
         Employee director = employeeService.find(dto.director);
         if (director == null) {
-            return false;
+            throw new ConstraintViolationException("director", null);
         }
 
         Company edited = dto.createEntity();
@@ -36,10 +36,9 @@ public class CompanyService extends DaoInteractService<Company, ICompanyDao> imp
         else {
             Company company = dao.find(dto.id);
             if (company == null) {
-                return false;
+                throw new ConstraintViolationException("id", null);
             }
             dao.update(edited);
         }
-        return true;
     }
 }

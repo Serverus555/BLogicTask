@@ -11,7 +11,7 @@ import java.util.List;
 
 @Local
 public interface IDaoInteractService<T, DAO extends IAbstractDao<T>> {
-    boolean put(T obj);
+    void put(T obj);
 
     T find(long id);
 

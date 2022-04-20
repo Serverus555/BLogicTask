@@ -3,7 +3,9 @@ package me.serverus.blogictask.dto;
 import com.sun.istack.Nullable;
 import me.serverus.blogictask.model.Assignment;
 
-import java.time.ZonedDateTime;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -11,12 +13,19 @@ public class AssignmentPutDto {
 
     @Nullable
     public Long id;
+    @NotEmpty
     public String subject;
+    @NotNull
     public Long author;
-    public ZonedDateTime deadline;
+    @NotNull
+    public Date deadline;
+    @NotEmpty
     public String description;
+    @NotNull
     public List<Long> executors;
+    @NotNull
     public Assignment.ExecuteStatus executeStatus;
+    @NotNull
     public Assignment.ControlStatus controlStatus;
 
     public Assignment createEntity() {

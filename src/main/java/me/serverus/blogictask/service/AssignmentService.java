@@ -8,6 +8,7 @@ import me.serverus.blogictask.service.interfaces.IAssignmentService;
 import me.serverus.blogictask.service.interfaces.IEmployeeService;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,21 +23,21 @@ public class AssignmentService extends DaoInteractService<Assignment, IAssignmen
     }
 
     @Override
-    public boolean put(AssignmentPutDto dto) {
+    public void put(AssignmentPutDto dto) {
         Employee author = employeeService.find(dto.author);
         if (author == null) {
-            return false;
+            throw new ConstraintViolationException("author", null);
         }
         Set<Employee> executors = new HashSet<>();
         for (Long executorId : dto.executors) {
             Employee executor = employeeService.find(executorId);
             if (executor == null) {
-                return false;
+                throw new ConstraintViolationException("executors", null);
             }
             executors.add(executor);
         }
         if (!dto.executeStatus.validateControlStatus(dto.controlStatus)) {
-            return false;
+            throw new ConstraintViolationException("controlStatus", null);
         }
 
         Assignment edited = dto.createEntity();
@@ -49,10 +50,9 @@ public class AssignmentService extends DaoInteractService<Assignment, IAssignmen
         else {
             Assignment assignment = dao.find(dto.id);
             if (assignment == null) {
-                return false;
+                throw new ConstraintViolationException("id", null);
             }
             dao.update(edited);
         }
-        return true;
     }
 }

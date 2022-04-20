@@ -2,8 +2,8 @@ package me.serverus.blogictask.model;
 
 import javax.persistence.*;
 
-import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,14 +22,14 @@ public class Assignment {
     @JoinColumn(name = "author")
     private Employee author;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "assignment_employee",
-            joinColumns = @JoinColumn(name = "assignment"),
-            inverseJoinColumns = @JoinColumn(name = "employee"))
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(name = "assignment_executors",
+            joinColumns = @JoinColumn(name = "assignment_id"),
+            inverseJoinColumns = @JoinColumn(name = "executor_id"))
     private Set<Employee> executors = new LinkedHashSet<>();
 
     @Column(name = "deadline")
-    private ZonedDateTime deadline;
+    private Date deadline;
 
     @Enumerated
     @Column(name = "control_status")
@@ -66,11 +66,11 @@ public class Assignment {
         this.controlStatus = controlStatus;
     }
 
-    public ZonedDateTime getDeadline() {
+    public Date getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(ZonedDateTime deadline) {
+    public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
 

@@ -49,11 +49,11 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
                 Path<String> path = root.get(filter.column);
                 Optional<Predicate> p = getPredicate(cb, path.getJavaType(), path ,filter.value);
                 if (p.isPresent()) {
-                    predicate = cb.and(p.get());
+                    predicate = cb.and(predicate, p.get());
                 }
             }
             else {
-                predicate = cb.and(createFilterSubPredicate(filter, cb, root));
+                predicate = cb.and(predicate, createFilterSubPredicate(filter.value, cb, root.get(filter.column)));
             }
         }
 
@@ -93,15 +93,15 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
         return column.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 
-    private Predicate createFilterSubPredicate(Filter filter, CriteriaBuilder cb, Path<?> path) {
+    private Predicate createFilterSubPredicate(String value, CriteriaBuilder cb, Path<?> path) {
         Class<?> nestedEntityClass = path.getJavaType();
         EntityType<?> entityType = em.getMetamodel().entity(nestedEntityClass);
         Predicate predicate = cb.disjunction();
         Set<? extends Attribute<?, ?>> a = entityType.getDeclaredAttributes();
         for (Attribute<?, ?> column : a) {
-            Optional<Predicate> p = getPredicate(cb, column.getJavaType(), path.get(column.getName()), filter.value);
+            Optional<Predicate> p = getPredicate(cb, column.getJavaType(), path.get(column.getName()), value);
             if (p.isPresent()) {
-                predicate = cb.or(p.get());
+                predicate = cb.or(predicate, p.get());
             }
         }
         return predicate;
@@ -112,8 +112,8 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
         if (columnClass == String.class) {
             predicate = cb.like(path, "%"+value+"%");
         }
-        else if (columnClass == Long.class && value.matches("[0-9]")) {
-            predicate = cb.equal(path, value);
+        else if (columnClass == Long.class && value.matches("^[0-9]+$")) {
+            predicate = cb.equal(path, Integer.parseInt(value));
         }
 
         return Optional.ofNullable(predicate);

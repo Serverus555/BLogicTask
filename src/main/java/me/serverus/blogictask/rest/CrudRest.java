@@ -3,6 +3,7 @@ package me.serverus.blogictask.rest;
 import me.serverus.blogictask.dto.GetEntitiesRequest;
 import me.serverus.blogictask.service.interfaces.IDaoInteractService;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -19,8 +20,8 @@ public abstract class CrudRest<T, SERVICE extends IDaoInteractService<T, ?>> {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean put(T obj) {
-        return service.put(obj);
+    public void put(@Valid T obj) {
+        service.put(obj);
     }
 
     @GET

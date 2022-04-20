@@ -21,19 +21,12 @@ public abstract class DaoInteractService<T, DAO extends IAbstractDao<T>> impleme
     }
 
     @Override
-    public boolean put(T obj) {
+    public void put(T obj) throws IllegalArgumentException {
         try {
             dao.update(obj);
-            return true;
         }
-        catch (IllegalArgumentException | TransactionRequiredException e) {
-            try {
-                dao.create(obj);
-                return true;
-            }
-            catch (IllegalArgumentException e2) {
-                return false;
-            }
+        catch (IllegalArgumentException | TransactionRequiredException ignored) {
+            dao.create(obj);
         }
     }
 

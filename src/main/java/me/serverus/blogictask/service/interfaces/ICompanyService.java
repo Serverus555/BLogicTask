@@ -7,5 +7,5 @@ import me.serverus.blogictask.repository.interfaces.ICompanyDao;
 import javax.ejb.LocalBean;
 
 public interface ICompanyService extends IDaoInteractService<Company, ICompanyDao> {
-    boolean put(CompanyPutDto dto);
+    void put(CompanyPutDto dto);
 }
