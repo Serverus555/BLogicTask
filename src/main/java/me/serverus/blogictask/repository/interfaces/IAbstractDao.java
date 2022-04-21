@@ -1,10 +1,9 @@
 package me.serverus.blogictask.repository.interfaces;
 
-import me.serverus.blogictask.utils.Filter;
-import me.serverus.blogictask.utils.Sort;
+import me.serverus.blogictask.utils.search.Filter;
+import me.serverus.blogictask.utils.search.Sort;
 
 import javax.ejb.Local;
-import javax.ejb.LocalBean;
 import java.util.List;
 
 @Local

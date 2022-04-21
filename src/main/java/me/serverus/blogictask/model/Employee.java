@@ -3,7 +3,7 @@ package me.serverus.blogictask.model;
 import javax.persistence.*;
 import org.hibernate.Hibernate;
 
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "employee")

@@ -18,15 +18,9 @@ public class Assignment {
     @Column(name = "subject")
     private String subject;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne()
     @JoinColumn(name = "author")
     private Employee author;
-
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(name = "assignment_executors",
-            joinColumns = @JoinColumn(name = "assignment_id"),
-            inverseJoinColumns = @JoinColumn(name = "executor_id"))
-    private Set<Employee> executors = new LinkedHashSet<>();
 
     @Column(name = "deadline")
     private Date deadline;
@@ -41,6 +35,20 @@ public class Assignment {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "assignment_executors",
+            joinColumns = @JoinColumn(name = "Assignment_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "executors_id", referencedColumnName = "id"))
+    private Set<Employee> executors = new LinkedHashSet<>();
+
+    public Set<Employee> getExecutors() {
+        return executors;
+    }
+
+    public void setExecutors(Set<Employee> executors) {
+        this.executors = executors;
+    }
 
     public String getDescription() {
         return description;
@@ -72,14 +80,6 @@ public class Assignment {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
-    }
-
-    public Set<Employee> getExecutors() {
-        return executors;
-    }
-
-    public void setExecutors(Set<Employee> executors) {
-        this.executors = executors;
     }
 
     public Employee getAuthor() {
@@ -131,5 +131,10 @@ public class Assignment {
                 new ControlStatus[] {ControlStatus.REJECTED},
                 new ControlStatus[] {ControlStatus.ACCEPTED},
         };
+    }
+
+    @PreRemove
+    private void clearExecutors() {
+        getExecutors().clear();
     }
 }

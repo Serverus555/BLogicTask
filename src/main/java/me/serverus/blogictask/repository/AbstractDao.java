@@ -1,14 +1,13 @@
 package me.serverus.blogictask.repository;
 
 import me.serverus.blogictask.repository.interfaces.IAbstractDao;
-import me.serverus.blogictask.utils.Filter;
-import me.serverus.blogictask.utils.Sort;
+import me.serverus.blogictask.utils.search.Filter;
+import me.serverus.blogictask.utils.search.Sort;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -52,6 +51,19 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
                     predicate = cb.and(predicate, p.get());
                 }
             }
+            else if (persistenceType == Attribute.PersistentAttributeType.MANY_TO_MANY) {
+                Optional<Predicate> p = filterManyToMany(filter, cb, cq);
+                if (p.isPresent()) {
+                    predicate = cb.and(predicate, p.get());
+                }
+//                Class<?> subEntitiesClass= ((PluralAttribute<?, ?, ?>) em.getMetamodel().entity(typeClass).getDeclaredAttribute(filter.column)).getElementType().getJavaType();
+//                Subquery<?> subQuery = cq.subquery(subEntitiesClass);
+//                Root<?> subQueryRoot = subQuery.from(subEntitiesClass);
+//                subQuery.where(createFilterSubPredicate(filter.value, cb, subQueryRoot));
+//                subQuery.select(subQueryRoot);
+//                predicate = cb.and(predicate, cb.in(subQueryRoot).value(subQuery));
+
+            }
             else {
                 predicate = cb.and(predicate, createFilterSubPredicate(filter.value, cb, root.get(filter.column)));
             }
@@ -59,8 +71,13 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
 
         cq.where(predicate);
 
-        Function<Expression<?>, Order> orderFunc = sort.isAscend ? cb::asc : cb::desc;
-        cq.orderBy(orderFunc.apply(root.get(sort.column)));
+        if (root.getModel()
+                .getDeclaredAttribute(sort.column)
+                .getPersistentAttributeType() != Attribute.PersistentAttributeType.MANY_TO_MANY) {
+
+            Function<Expression<?>, Order> orderFunc = sort.isAscend ? cb::asc : cb::desc;
+            cq.orderBy(orderFunc.apply(root.get(sort.column)));
+        }
 
         return em.createQuery(cq)
                 .setFirstResult(from)
@@ -93,7 +110,7 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
         return column.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 
-    private Predicate createFilterSubPredicate(String value, CriteriaBuilder cb, Path<?> path) {
+    protected Predicate createFilterSubPredicate(String value, CriteriaBuilder cb, Path<?> path) {
         Class<?> nestedEntityClass = path.getJavaType();
         EntityType<?> entityType = em.getMetamodel().entity(nestedEntityClass);
         Predicate predicate = cb.disjunction();
@@ -117,5 +134,9 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
         }
 
         return Optional.ofNullable(predicate);
+    }
+
+    protected Optional<Predicate> filterManyToMany(Filter filter, CriteriaBuilder cb, CriteriaQuery<T> cq) {
+        return Optional.empty();
     }
 }

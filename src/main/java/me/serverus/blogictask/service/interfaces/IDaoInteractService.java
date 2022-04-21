@@ -1,12 +1,10 @@
 package me.serverus.blogictask.service.interfaces;
 
 import me.serverus.blogictask.repository.interfaces.IAbstractDao;
-import me.serverus.blogictask.utils.Filter;
-import me.serverus.blogictask.utils.Sort;
+import me.serverus.blogictask.utils.search.Filter;
+import me.serverus.blogictask.utils.search.Sort;
 
 import javax.ejb.Local;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import java.util.List;
 
 @Local

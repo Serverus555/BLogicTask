@@ -2,12 +2,10 @@ package me.serverus.blogictask.service;
 
 import me.serverus.blogictask.repository.interfaces.IAbstractDao;
 import me.serverus.blogictask.service.interfaces.IDaoInteractService;
-import me.serverus.blogictask.utils.Filter;
-import me.serverus.blogictask.utils.Sort;
-import org.hibernate.HibernateException;
+import me.serverus.blogictask.utils.search.Filter;
+import me.serverus.blogictask.utils.search.Sort;
 
 import javax.ejb.Stateless;
-import javax.persistence.PersistenceException;
 import javax.persistence.TransactionRequiredException;
 import java.util.List;
 

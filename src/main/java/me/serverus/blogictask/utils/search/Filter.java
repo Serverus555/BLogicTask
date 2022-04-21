@@ -1,4 +1,4 @@
-package me.serverus.blogictask.utils;
+package me.serverus.blogictask.utils.search;
 
 public class Filter {
 

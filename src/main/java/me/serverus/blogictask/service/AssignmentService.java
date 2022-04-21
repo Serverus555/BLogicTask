@@ -26,13 +26,13 @@ public class AssignmentService extends DaoInteractService<Assignment, IAssignmen
     public void put(AssignmentPutDto dto) {
         Employee author = employeeService.find(dto.author);
         if (author == null) {
-            throw new ConstraintViolationException("author", null);
+            throw new ConstraintViolationException("notfound author", null);
         }
         Set<Employee> executors = new HashSet<>();
         for (Long executorId : dto.executors) {
             Employee executor = employeeService.find(executorId);
             if (executor == null) {
-                throw new ConstraintViolationException("executors", null);
+                throw new ConstraintViolationException("notfound executors", null);
             }
             executors.add(executor);
         }
@@ -49,6 +49,7 @@ public class AssignmentService extends DaoInteractService<Assignment, IAssignmen
         }
         else {
             Assignment assignment = dao.find(dto.id);
+//            never executed
             if (assignment == null) {
                 throw new ConstraintViolationException("id", null);
             }
