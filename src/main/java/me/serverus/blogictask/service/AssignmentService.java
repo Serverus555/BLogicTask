@@ -10,6 +10,7 @@ import me.serverus.blogictask.service.interfaces.IEmployeeService;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AssignmentService extends DaoInteractService<Assignment, IAssignmentDao> implements IAssignmentService {

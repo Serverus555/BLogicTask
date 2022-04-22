@@ -8,9 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.*;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class AbstractDao<T> implements IAbstractDao<T> {
@@ -124,13 +125,31 @@ public abstract class AbstractDao<T> implements IAbstractDao<T> {
         return predicate;
     }
 
-    protected Optional<Predicate> getPredicate(CriteriaBuilder cb, Class<?> columnClass, Path<String> path, String value) {
+    protected Optional<Predicate> getPredicate(CriteriaBuilder cb, Class<?> columnClass, Path<?> path, String value) {
         Predicate predicate = null;
         if (columnClass == String.class) {
-            predicate = cb.like(path, "%"+value+"%");
+            predicate = cb.like((Expression<String>) path, "%"+value+"%");
         }
         else if (columnClass == Long.class && value.matches("^[0-9]+$")) {
             predicate = cb.equal(path, Integer.parseInt(value));
+        }
+        else if (columnClass == Date.class) {
+            Date date = null;
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+            }
+            catch (ParseException ignored) {}
+            if (date != null) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(date);
+                c.add(Calendar.DATE, -1);
+                Date after = c.getTime();
+                c.add(Calendar.DATE, 2);
+                Date before = c.getTime();
+
+//                predicate = cb.greaterThanOrEqualTo((Expression<Date>) path, after)
+                predicate = cb.between((Expression<Date>) path, after, before);
+            }
         }
 
         return Optional.ofNullable(predicate);

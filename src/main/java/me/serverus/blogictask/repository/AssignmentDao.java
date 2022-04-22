@@ -7,7 +7,10 @@ import me.serverus.blogictask.utils.search.Filter;
 
 import javax.ejb.Stateless;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.PluralAttribute;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Stateless
 public class AssignmentDao extends AbstractDao<Assignment> implements IAssignmentDao {
@@ -17,7 +20,7 @@ public class AssignmentDao extends AbstractDao<Assignment> implements IAssignmen
     }
 
     @Override
-    protected Optional<Predicate> getPredicate(CriteriaBuilder cb, Class<?> columnClass, Path<String> path, String value) {
+    protected Optional<Predicate> getPredicate(CriteriaBuilder cb, Class<?> columnClass, Path<?> path, String value) {
         Predicate predicate = null;
         if (columnClass == Assignment.ControlStatus.class) {
             predicate = cb.equal(path, Assignment.ControlStatus.valueOf(value));
